@@ -35,6 +35,7 @@ def translate(text):
         temperature=0
     )
     return response.choices[0].text.strip()
+
 ########################################################################
 #Translate and save srt file
 def save_translate_srt(file_path, translated_file_path):
@@ -82,7 +83,7 @@ def menu():
         
         file=input('Please, enter the path of the audio file: ')
         form=input('Please, enter the format of the output file (srt, text): ')
-        lan=input('Please, enter the languaje of the audio: ')
+        lan=input('Please, enter the languaje of the audio (en, es, jp): ')
         
         transcript=transcript_audio(file,form,lan)
         
