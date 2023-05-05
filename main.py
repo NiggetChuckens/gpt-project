@@ -3,10 +3,11 @@ import sys
 import pysrt
 import openai
 
-openai.api_key = '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'
+openai.api_key = ''
 
-'''print(openai.api_key)'''
-audio_file=open('../Downloads/megami_no_terrace_op.mp3', 'rb')
+#Transcribe an audio
+
+audio_file=open('paht/to/file', 'rb')
 transcript=openai.Audio.transcribe(
     file = audio_file,
     model ="whisper-1", 
@@ -14,9 +15,7 @@ transcript=openai.Audio.transcribe(
     languaje="jp"
     )
 
-'''input_data= sys.stdin.read()'''
-
-'''input_data = open('gpt_project/test.srt', 'r').read()
+'''input_data = open('path/to/file', 'r').read()
 subs=pysrt.from_string(input_data)
 
 prompt_base=(
@@ -44,6 +43,6 @@ for index, subtitule, text in enumerate(subs):
 
 print(transcript)
 
-with open('gpt_project/text.srt', 'w') as file:
+with open('path/to file', 'w') as file:
     file.write(transcript)
 #print(translate)
