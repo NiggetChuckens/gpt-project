@@ -3,7 +3,8 @@ import sys
 import pysrt
 import openai
 
-openai.api_key = '' #API key
+
+openai.api_key = input('For this script is necessary an OpenAi API Key, if you have one paste it here: ') #API key
 
 ########################################################################
 #Transcribe an audio
@@ -70,6 +71,7 @@ def save_file(file_path, subs):
 #Menu        
 def menu():
     try:
+        
         option=int(input('This is an AI powered translator and transcriptor. \nWhich option do you want to use?\n 1. Transcriptor \n 2. Translator \n 3. Exit\nOption: '))
     except:
         menu()
