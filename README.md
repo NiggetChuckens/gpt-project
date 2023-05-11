@@ -1,9 +1,7 @@
 ## Install the libraries used in this project:
 - For the srt files use:
-```python
-pip install pysrt
-```
+```pip install pysrt```
 - For OpenAi use:
-```python
-pip install openai
-```
+```pip install openai```
+- For ass files support use:
+```pip install ass```
