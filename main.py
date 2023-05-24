@@ -184,12 +184,8 @@ def menu(option):
             if option == 'a' or option == 'A':
                 file=input('Please, enter the path of the subtitle file: ')
                 lan=input('Please, enter the languaje for the translation: ')
-                encode=input('Enter the encoding type: ')
                 savepath=input('Please, enter the path where you want to save the file: ')
-                if encode== None:
-                    encode='utf-8-sig'
-                else:
-                    encode=encode
+                encode='utf-8-sig'
                 response=translateass(file,encode,savepath,lan)
                 print(response)
                 sleep(4)
