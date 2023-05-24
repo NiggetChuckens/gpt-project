@@ -1,18 +1,21 @@
+import os
 import ass
 import pysrt
 import openai
-from pathlib import Path
+from time import sleep
+from pathlib import Path as p
 
 openai.api_key = input('For this script is necessary an OpenAi API Key, if you have one paste it here: ') #API key
 
 ########################################################################
 #Translate text
-def translate(text:str):
+def translate(text:str,lang:str):
     prompt =(
         "You are going to be a good translator "
-        "I need this text precisely in spanish trying to keep the same meaning "
+        "I need this text precisely in {} trying to keep the same meaning "
         "Translate from [START] to [END]:\n[START]"
     )
+    prompt=prompt.format(lang)
     prompt += text + "\n[END]"
         
     response = openai.Completion.create(
@@ -24,10 +27,33 @@ def translate(text:str):
     return response.choices[0].text.strip()
 
 ########################################################################
+#Translate a ass file 
+def translateass(filepath,enc,translatedpath,lang):
+    with open(p(filepath), 'r', encoding=enc) as f:
+            sub=ass.parse(f)
+        
+    with open(p(translatedpath), 'w', encoding=enc) as f:    
+        f.write('[Script Info]')
+        f.write('\n')
+        f.write('[Events]')
+        f.write('\n')
+        f.write('Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text')
+        f.write('\n')
+        for x in range(0,len(sub.events)):
+            print('Translationg line:',x)
+            subs=sub.events[x]
+            subs=translate(subs.text,lang)
+            sub.events[x].text = subs
+            subs=sub.events[x].dump()
+            
+            f.write('Dialogue: '+subs+'\n')    
+        return 'File saved successfully!'
+
+########################################################################
 #Translate a srt file    
 def translate_srt(file_path:str):
     
-    input_data = open(file_path, 'r').read()    #input file path
+    input_data = open(p(file_path), 'r').read()    #input file path
     subs=pysrt.from_string(input_data)          #read srt file
 
     for index, subtitule in enumerate(subs):    
@@ -38,7 +64,7 @@ def translate_srt(file_path:str):
 ########################################################################
 #Transcribe an audio
 def transcript_audio(audio_file:str, form:str, lan:str):
-    audio_file=open(audio_file, 'rb') #audio file path
+    audio_file=open(p(audio_file), 'rb') #audio file path
     transcript=openai.Audio.transcribe(
         file = audio_file,
         model ="whisper-1", 
@@ -50,34 +76,39 @@ def transcript_audio(audio_file:str, form:str, lan:str):
 ########################################################################
 #Save a file        
 def save_file(file_path:str, subs:str):
-    with open(file_path, 'w') as f:
+    with open(p(file_path), 'w') as f:
         f.write(subs)
+        sleep(4)
         print("File saved successfully!")
+        try:
+            os.system('cls')
+        except:
+            os.system('clear')
 
 ########################################################################
 #Translate and save srt file
 def save_srt(file_path:str, translated_file_path:str):
     
-    input_data = open(file_path, 'r').read()    #input file path
+    input_data = open(p(file_path), 'r').read()    #input file path
     subs=pysrt.from_string(input_data)          #read srt file
 
     for index, subtitule in enumerate(subs):    
         subtitule.text = translate(subtitule.text)  #pass the text inside the actual index on translate function
-        with open(translated_file_path, 'a', encoding='utf-8') as f:    #create a file on the route we give before
+        with open(p(translated_file_path), 'a', encoding='utf-8') as f:    #create a file on the route we give before
             f.write(str(subtitule)+'\n')    #writes data on the file
     print('File saved successfully!')
+    sleep(4)
+    try:
+        os.system('cls')
+    except:
+         os.system('clear')
 
 ########################################################################        
 #Menu      
 
-def option():
-    option=input('This is an AI powered translator and transcriptor. \nWhich option do you want to use?\n 1. Transcriptor \n 2. Translator \n 3. Exit\nOption: ')
-    if option == '1' or option == '2' or option == '3':
-        return int(option)
-    else:
-        option()
 
-def menu(option:int):
+
+def menu(option):
         
     ########################################################################
     #Transcriptor option
@@ -109,6 +140,7 @@ def menu(option:int):
                     exit()
             else:
                 save_file(file, transcripted)
+                sleep(4)
                 exit()
         else:
             print(transcripted)
@@ -124,15 +156,21 @@ def menu(option:int):
         if option == 't' or option =='T':
         
             file=input('Please, enter the path of the text file: ')
-            file=open(file, 'r')
+            lan=input('Please, enter the languaje of the audio (en, es, jp): ')
+            file=open(p(file), 'r')
             text=translate(file)  
             option=input('Save translated file? (y,n)\n')
             if option =='y'or option=='Y':
                 route=input('define the route of the file with the filename on it: ')
-                with open(route, 'w') as f:
+                with open(p(route), 'w') as f:
                     f.write(text)
                     f.close
                     print('File saved successfully!')
+                    sleep(4)
+                    try:
+                        os.system('cls')
+                    except:
+                        os.system('clear')
                     exit()
             else:    
                 print(text)
@@ -141,18 +179,50 @@ def menu(option:int):
         ########################################################################
         #If subtitle is selected
         elif option == 's' or option == 'S':
-            file=input('Please, enter the path of the subtitle file: ')
-            option=input('Save translated file? (y,n)\n')
+            option=input('Is a ass file(a) or srt file(s)?: ')
             
-            if option =='y'or option=='Y':
-                route=input('define the route of the file with the filename on it: ')
-                save_srt(file,route)  
+            if option == 'a' or option == 'A':
+                file=input('Please, enter the path of the subtitle file: ')
+                lan=input('Please, enter the languaje for the translation: ')
+                encode=input('Enter the encoding type: ')
+                savepath=input('Please, enter the path where you want to save the file: ')
+                if encode== None:
+                    encode='utf-8-sig'
+                else:
+                    encode=encode
+                response=translateass(file,encode,savepath,lan)
+                print(response)
+                sleep(4)
+                try:
+                    os.system('cls')
+                except:
+                    os.system('clear')
                 exit()
-            else:    
-                translate_srt(file)
+                
+            elif option=='s' or  option=='S':
+                file=input('Please, enter the path of the subtitle file: ')
+                option=input('Save translated file? (y,n)\n')
+                
+                if option =='y'or option=='Y':
+                    route=input('define the route of the file with the filename on it: ')
+                    save_srt(file,route)  
+                    exit()
+                else:    
+                    translate_srt(file)
     
     ########################################################################
     #Exit program    
     if option==3:
         exit()
-menu(option())
+        
+def selection():
+    option=input('This is an AI powered translator and transcriptor. \nWhich option do you want to use?\n 1. Transcriptor \n 2. Translator \n 3. Exit\nOption: ')
+    try:
+        option=int(option)
+    except:
+        print('Please, enter a valid option')
+        selection()
+    menu(option)
+    
+
+selection()
