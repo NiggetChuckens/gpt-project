@@ -51,13 +51,13 @@ def translateass(filepath,enc,translatedpath,lang):
 
 ########################################################################
 #Translate a srt file    
-def translate_srt(file_path:str):
+def translate_srt(file_path:str, lang:str):
     
     input_data = open(p(file_path), 'r').read()    #input file path
     subs=pysrt.from_string(input_data)          #read srt file
 
     for index, subtitule in enumerate(subs):    
-        subtitule.text = translate(subtitule.text)  #pass the text inside the actual index on translate function
+        subtitule.text = translate(subtitule.text,lang)  #pass the text inside the actual index on translate function
         print(subtitule)
     exit()   
 
@@ -87,13 +87,13 @@ def save_file(file_path:str, subs:str):
 
 ########################################################################
 #Translate and save srt file
-def save_srt(file_path:str, translated_file_path:str):
+def save_srt(file_path:str, translated_file_path:str,lang:str):
     
     input_data = open(p(file_path), 'r').read()    #input file path
     subs=pysrt.from_string(input_data)          #read srt file
 
     for index, subtitule in enumerate(subs):    
-        subtitule.text = translate(subtitule.text)  #pass the text inside the actual index on translate function
+        subtitule.text = translate(subtitule.text,lang)  #pass the text inside the actual index on translate function
         with open(p(translated_file_path), 'a', encoding='utf-8') as f:    #create a file on the route we give before
             f.write(str(subtitule)+'\n')    #writes data on the file
     print('File saved successfully!')
@@ -156,9 +156,9 @@ def menu(option):
         if option == 't' or option =='T':
         
             file=input('Please, enter the path of the text file: ')
-            lan=input('Please, enter the languaje of the audio (en, es, jp): ')
+            lan=input('Please, enter the languaje for the translation: ')
             file=open(p(file), 'r')
-            text=translate(file)  
+            text=translate(file,lan)  
             option=input('Save translated file? (y,n)\n')
             if option =='y'or option=='Y':
                 route=input('define the route of the file with the filename on it: ')
@@ -197,14 +197,15 @@ def menu(option):
                 
             elif option=='s' or  option=='S':
                 file=input('Please, enter the path of the subtitle file: ')
+                lan=input('Please, enter the languaje for the translation: ')
                 option=input('Save translated file? (y,n)\n')
                 
                 if option =='y'or option=='Y':
                     route=input('define the route of the file with the filename on it: ')
-                    save_srt(file,route)  
+                    save_srt(file,route,lan)  
                     exit()
                 else:    
-                    translate_srt(file)
+                    translate_srt(file,lan)
     
     ########################################################################
     #Exit program    
