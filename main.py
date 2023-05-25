@@ -43,7 +43,7 @@ def translateass(filepath,enc,translatedpath,lang):
             print('Translationg line:',x)
             subs=sub.events[x]
             subs=translate(subs.text,lang)
-            sub.events[x].text = subs
+            sub.events[x].text = subs+'{'+str(sub.events[x].text)+'}'
             subs=sub.events[x].dump()
             
             f.write('Dialogue: '+subs+'\n')    
