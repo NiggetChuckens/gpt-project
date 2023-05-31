@@ -6,6 +6,7 @@ from time import sleep
 from pathlib import Path as p
 
 openai.api_key = input('For this script is necessary an OpenAi API Key, if you have one paste it here: ') #API key
+os.system('cls')
 
 ########################################################################
 #Translate text
@@ -78,8 +79,8 @@ def transcript_audio(audio_file:str, form:str, lan:str):
 def save_file(file_path:str, subs:str):
     with open(p(file_path), 'w') as f:
         f.write(subs)
-        sleep(4)
         print("File saved successfully!")
+        sleep(4)
         try:
             os.system('cls')
         except:
