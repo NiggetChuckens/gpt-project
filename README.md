@@ -11,4 +11,5 @@ https://streamable.com/96gwmr
 ```pip install tk```
 -For tkinter module (Linux users):
 ```sudo apt install python3-tk``` (Debian)
+
 ```sudo pacman -S python3-tk```   (Arch)
