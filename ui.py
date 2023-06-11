@@ -10,7 +10,7 @@ from tkinter import filedialog
 
 window=tk.Tk()
 tkvar=StringVar(window)
-openai.api_key='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'
+openai.api_key=''
 
 class Functions:
     tkvar=StringVar(window)
