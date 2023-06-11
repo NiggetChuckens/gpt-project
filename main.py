@@ -6,8 +6,11 @@ from time import sleep
 from pathlib import Path as p
 
 openai.api_key = input('For this script is necessary an OpenAi API Key, if you have one paste it here: ') #API key
-os.system('cls')
-
+try:
+    os.system('cls')
+except:
+    os.system('clear')
+    
 ########################################################################
 #Translate text
 def translate(text:str,lang:str):
