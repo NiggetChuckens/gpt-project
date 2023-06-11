@@ -1,5 +1,6 @@
 import os
 import ass
+import time
 import pysrt
 import openai
 import tkinter as tk
@@ -10,10 +11,13 @@ from tkinter import filedialog
 
 window=tk.Tk()
 tkvar=StringVar(window)
-openai.api_key=''
-
+label=Label(window,text="Translating line: ")
 class Functions:
     tkvar=StringVar(window)
+    
+    def check(line):
+        progress['value']=line
+        
     ########################################################################
     #Translate text
     def translate(text:str,lang:str):
@@ -46,14 +50,14 @@ class Functions:
             f.write('Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text')
             f.write('\n')
             for x in range(0,len(sub.events)):
-                ass_status_bar=('Translationg line:',x)
+                              
                 subs=sub.events[x]
                 subs=Functions.translate(subs.text,lang)
                 sub.events[x].text = subs+'{'+str(sub.events[x].text)+'}'
                 subs=sub.events[x].dump()
                 
                 f.write('Dialogue: '+subs+'\n')    
-            return 'File saved successfully!'
+            label["text"]="File translated succesfully"
         
     ########################################################################
     #Translate and save srt file
@@ -64,7 +68,7 @@ class Functions:
         subs=pysrt.from_string(input_data)          #read srt file
 
         for index, subtitule in enumerate(subs):
-            srt_status_bar = index    
+            srt_status_bar = 'Translating line: '+index    
             subtitule.text = Functions.translate(subtitule.text,lang)  #pass the text inside the actual index on translate function
             with open(p(translated_file_path), 'a', encoding='utf-8') as f:    #create a file on the route we give before
                 f.write(str(subtitule)+'\n')    #writes data on the file
@@ -99,34 +103,51 @@ class Functions:
         return tkvar.trace('w', Functions.change_dropdown)
     
     def translator():
-        file=path
-        lang=dropdown
+        try:
+            file=path
+        except:
+            tk.messagebox.showerror('Path not found or not selected','Please select a file to translate')
         
-        if file.endswith(".ass"):
-            start=Functions.translateass(filepath=file, enc='utf-8-sig', translatedpath=(file.strip('.ass')+'_translated.ass'),lang=lang)
-            Label(window,text=ass_status_bar).place(x=200,y=200)
-        elif file.endswith(".srt"):
-            start=Functions.save_srt(file_path=file,translatedpath=(file.strip('.srt')+'_translated.srt'), lang=lang)
-            Label(window,text=srt_status_bar).place(x=300,y=300)
-            
+        try:
+            lang=dropdown
+        except:
+            tk.messagebox.showerror('Language not selected','Please select a language to translate')
+
+        print(file,lang)
+        
+        start=Functions.translateass(filepath=file, enc='utf-8-sig', translatedpath=(file.strip('.ass')+'_translated.ass'),lang=lang)
+        
+    def apikey():
+        if textBox.get("1.0","end-1c") == '':
+            tk.messagebox.showerror("Error",'Please enter your openai apikey')
+        else:
+            openai.api_key=textBox.get("1.0","end-1c")
+    
         
         
 # Main function
 class App:
     Functions.selectlanguage()
-    
+    global progress
+    global textBox
     filepath_button=tk.Button(window, text="Click here to open the file.", command=Functions.openfile)
-    start_button=tk.Button(window, text='Start translation', command=Functions.translator)
+    start_button=tk.Button(window, text='Start translation', command=lambda:[Functions.apikey(),Functions.translator()])
+    #progress=ttk.Progressbar(window,orient=HORIZONTAL,length=300,mode='determinate')
+    
+    textBox=Text(window, name="openai apikey", height=1, width=22)
     
     filepath_button.place(x=10,y=20)
     popupMenu.place(x=10,y=50)
     start_button.place(x=10,y=100)
-    
+    #progress.place(x=10,y=140)
+    label.place(x=10,y=140)
+    Label(window,text="Put your Openai ApiKey here").place(x=250,y=100)
+    textBox.place(x=250,y=125)
     
     window.title("IA translator script")
-    window.geometry("500x150")
+    window.geometry("500x180")
     window.configure(bg="lightgrey")
     window.mainloop()
         
 if __name__ == "__main__":
-    App.window()
+    App()
