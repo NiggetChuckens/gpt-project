@@ -7,3 +7,8 @@ https://streamable.com/96gwmr
 ```pip install openai```
 - For ass files support use:
 ```pip install ass```
+- For tkinter module (Windows users):
+```pip install tk```
+-For tkinter module (Linux users):
+```sudo apt install python3-tk``` (Debian)
+```sudo pacman -S python3-tk```   (Arch)
