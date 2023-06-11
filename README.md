@@ -9,6 +9,7 @@ https://streamable.com/96gwmr
 ```pip install ass```
 - For tkinter module (Windows users):
 ```pip install tk```
-- For tkinter module (Linux users):
-```sudo apt install python3-tk``` (Debian)
-```sudo pacman -S python3-tk```   (Arch)
+- For tkinter module (Debian based linux users):
+```sudo apt install python3-tk``` 
+- For tkinter module (Arch linux users):
+```sudo pacman -S python3-tk```
