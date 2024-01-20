@@ -13,5 +13,3 @@ https://streamable.com/96gwmr
 ```sudo apt install python3-tk``` 
 - For tkinter module (Arch linux users):
 ```sudo pacman -S python3-tk```
-
-* IMPORTANT: ui.py file only works with .ass archives *
