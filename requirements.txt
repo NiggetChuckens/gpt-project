@@ -1,0 +1,4 @@
+ass
+pysrt
+openai
+pyinstaller
