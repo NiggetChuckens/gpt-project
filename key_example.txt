@@ -1,0 +1,21 @@
+# API Keys Configuration
+# You can specify keys with prefixes or just put them directly
+# OpenAI keys start with "sk-"
+# Gemini keys are longer alphanumeric strings
+
+# Format 1: With prefixes (recommended)
+openai:sk-your-openai-key-here
+gemini:your-gemini-api-key-here
+
+# Format 2: Direct keys (auto-detected)
+# sk-another-openai-key-here
+# another-gemini-key-here
+
+# Format 3: Multiple keys for load balancing
+# openai:sk-key1-here
+# openai:sk-key2-here  
+# gemini:gemini-key1-here
+# gemini:gemini-key2-here
+
+# Lines starting with # are ignored
+# Empty lines are ignored

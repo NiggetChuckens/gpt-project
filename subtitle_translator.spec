@@ -9,6 +9,7 @@ a = Analysis(
         ('setup_environment.py', '.'),
         ('main.py', '.'),
         ('app_gui.py', '.'),
+        ('gemini_test.py', '.'),
     ],
     hiddenimports=[
         'tkinter',
@@ -17,6 +18,10 @@ a = Analysis(
         'tkinter.ttk',
         'urllib.request',
         'winreg',
+        'google.generativeai',
+        'google.ai.generativelanguage',
+        'google.auth',
+        'google.api_core',
     ],
     hookspath=[],
     hooksconfig={},

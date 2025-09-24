@@ -1,14 +1,47 @@
 # Subtitle Translator
 
-A desktop application that translates subtitle files using OpenAI's GPT API. The application can automatically install Python and all required dependencies.
+A desktop application that translates subtitle files using OpenAI's GPT API and Google Gemini API. The application supports multi-API keys for load balancing and can automatically install Python and all required dependencies.
 
 ## Features
 
+- **Multi-API Support**: Works with both OpenAI GPT and Google Gemini APIs
+- **Load Balancing**: Supports multiple API keys for better performance and reliability
+- **API Fallback**: Automatically switches to backup API if primary fails
 - **Automatic Setup**: Installs Python and required packages automatically
-- **User-Friendly GUI**: Easy-to-use graphical interface
+- **User-Friendly GUI**: Easy-to-use graphical interface with API selection
 - **Multiple Formats**: Supports ASS subtitle files (SRT support coming soon)
 - **Language Support**: Translate to multiple languages including Spanish, English, French, German, Italian, Portuguese, Japanese, and Korean
 - **Standalone Executable**: Can be distributed as a single executable file
+
+## API Keys Setup
+
+The application supports both OpenAI and Google Gemini APIs. Create a `key.txt` file in the same directory as the executable with your API keys:
+
+### Format Options:
+
+**Option 1 - With prefixes (recommended):**
+```
+openai:sk-your-openai-key-here
+gemini:your-gemini-api-key-here
+```
+
+**Option 2 - Auto-detection:**
+```
+sk-your-openai-key-here
+your-gemini-api-key-here
+```
+
+**Option 3 - Multiple keys for load balancing:**
+```
+openai:sk-key1-here
+openai:sk-key2-here
+gemini:gemini-key1-here
+gemini:gemini-key2-here
+```
+
+### Getting API Keys:
+- **OpenAI**: Get your API key from [OpenAI API Platform](https://platform.openai.com/api-keys)
+- **Google Gemini**: Get your API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
 
 ## Quick Start
 
@@ -17,9 +50,11 @@ A desktop application that translates subtitle files using OpenAI's GPT API. The
 1. Download the `SubtitleTranslator.exe` file
 2. Run the executable
 3. If Python or required packages are missing, the app will install them automatically
-4. Enter your OpenAI API key or place it in a `key.txt` file
-5. Select your subtitle file and target language
-6. Click "Translate"
+4. Create a `key.txt` file with your API keys (see format above)
+5. Use "Load/Reload Keys" button to load your API keys
+6. Select your preferred API (auto, openai, or gemini)
+7. Select your subtitle file and target language
+8. Click "Translate"
 
 ### Option 2: Build from Source
 
@@ -48,134 +83,137 @@ A desktop application that translates subtitle files using OpenAI's GPT API. The
    # Windows Command Prompt
    build_exe.bat
    
-   # Or PowerShell
-   .\build_exe.ps1
-   ```
-
-## API Key Setup
-
-You need an OpenAI API key to use this application:
-
-1. **Get an API key**:
-   - Go to [OpenAI API Keys](https://platform.openai.com/api-keys)
-   - Create a new API key
-   - Copy the key
-
-2. **Set up the API key**:
-   - **Option A**: Enter it in the GUI when prompted
-   - **Option B**: Create a `key.txt` file in the same directory as the executable and paste your API key there
-
-## Usage
-
-1. **Launch the application**
-2. **Enter your OpenAI API key** (or load from key.txt)
-3. **Select subtitle file** using the Browse button
-4. **Choose target language** from the dropdown
-5. **Click "Translate"** to start the process
-6. **Wait for completion** - the translated file will be saved with "_translated" suffix
-
-## Supported File Formats
-
-- **ASS files** (.ass) - Full support
-- **SRT files** (.srt) - Coming in future update
-
-## System Requirements
-
-- **Operating System**: Windows 10 or later
-- **Memory**: 2GB RAM minimum, 4GB recommended
-- **Storage**: 500MB free space for installation
-- **Internet**: Required for initial setup and translation API calls
-
-## Troubleshooting
-
-### Common Issues
-
-1. **"API key not found" error**:
-   - Make sure your API key is correctly entered in the GUI
-   - Or create a `key.txt` file with your API key
-
-2. **"Module not found" error**:
-   - Run the application again - it will attempt to install missing packages
-   - Check your internet connection
-
-3. **Translation fails**:
-   - Verify your API key is valid and has sufficient credits
-   - Check your internet connection
-   - Ensure the subtitle file is not corrupted
-
-4. **Python installation fails**:
-   - Run the application as Administrator
-   - Check your internet connection
-   - Manually install Python from python.org
-
-### Getting Help
-
-If you encounter issues:
-1. Check the output log in the application
-2. Ensure you have a stable internet connection
-3. Verify your OpenAI API key is valid
-4. Try running as Administrator if installation fails
-
-## File Structure
-
-```
-SubtitleTranslator/
-│
-├── launcher.py              # Main launcher script
-├── app_gui.py              # GUI application
-├── main.py                 # Core translation functions
-├── setup_environment.py    # Python and package installer
-├── requirements.txt        # Python dependencies
-├── subtitle_translator.spec # PyInstaller configuration
-├── build_exe.bat          # Windows build script
-├── build_exe.ps1          # PowerShell build script
-├── key.txt                # API key file (optional)
-└── README.md              # This file
-```
-
-## Development
-
-### Building the Executable
-
-To build your own executable:
-
-1. **Install PyInstaller**:
-   ```
-   pip install pyinstaller
-   ```
-
-2. **Run the build script**:
-   ```
-   # Windows Command Prompt
-   build_exe.bat
-   
-   # PowerShell
+   # Windows PowerShell
    .\build_exe.ps1
    
    # Manual build
+   pyinstaller subtitle_translator.spec
+   ```
+
+## How It Works
+
+The application works by:
+
+1. **Loading API Keys**: Reads multiple API keys from `key.txt` file
+2. **Load Balancing**: Randomly selects from available API keys for each translation
+3. **Fallback System**: If one API fails, automatically tries the other
+4. **Translation**: Sends subtitle text to the selected AI service
+5. **Format Preservation**: Maintains subtitle timing and formatting
+6. **Output**: Creates a new file with "_translated" suffix
+
+## Supported File Formats
+
+### Currently Supported:
+- **.ass files** (Advanced SubStation Alpha)
+
+### Coming Soon:
+- **.srt files** (SubRip Text)
+
+## API Preference Options
+
+- **auto**: Automatically selects between available APIs for load balancing
+- **openai**: Prefers OpenAI GPT-4 (with Gemini as fallback)
+- **gemini**: Prefers Google Gemini (with OpenAI as fallback)
+
+## Translation Models
+
+- **OpenAI**: Uses GPT-4o-mini model for cost-effective translation
+- **Google Gemini**: Uses Gemini-2.5-flash model for fast translation
+
+## Project Structure
+
+```
+subtitle-translator/
+├── launcher.py              # Main entry point and dependency installer
+├── app_gui.py              # GUI application
+├── main.py                 # Core translation functions with multi-API support
+├── functions.py            # Legacy translation functions
+├── gemini_test.py          # Original Gemini implementation (now integrated)
+├── requirements.txt        # Python dependencies
+├── subtitle_translator.spec # PyInstaller build configuration
+├── key.txt                 # API keys (create this file)
+├── key_example.txt         # Example API key format
+└── build_exe.*             # Build scripts
+```
+
+## Dependencies
+
+The application automatically installs these dependencies:
+- `ass` - ASS subtitle file parsing
+- `pysrt` - SRT subtitle file parsing
+- `openai` - OpenAI API client
+- `google-generativeai` - Google Gemini API client
+- `pyinstaller` - For building executables
+
+## Building the Executable
+
+To build your own executable:
+
+1. **Ensure environment is set up**:
+   ```bash
+   python setup_environment.py
+   ```
+
+2. **Build using batch file (Windows)**:
+   ```cmd
+   build_exe.bat
+   ```
+
+3. **Or build using PowerShell**:
+   ```powershell
+   .\build_exe.ps1
+   ```
+
+4. **Or build manually**:
+   ```bash
    pyinstaller --clean subtitle_translator.spec
    ```
 
-3. **Find the executable**:
-   - The built executable will be in the `dist/` folder
-   - Distribute the entire `dist/` folder
+The executable will be created in the `dist/` folder as `SubtitleTranslator.exe`.
 
-### Customization
+## Troubleshooting
 
-- **Add new languages**: Edit the language list in `app_gui.py`
-- **Change translation model**: Modify the model parameter in `main.py`
-- **Add file format support**: Extend the translation functions
+### Common Issues:
 
-## Original Tutorial
+1. **"No API keys found"**:
+   - Ensure `key.txt` exists in the same folder as the executable
+   - Check the key format (see examples above)
+   - Use "Load/Reload Keys" button after creating/editing the file
 
-https://streamable.com/96gwmr
+2. **"API request failed"**:
+   - Check your internet connection
+   - Verify your API keys are valid and have sufficient credits
+   - Try switching to the other API using the preference dropdown
+
+3. **"File not found"**:
+   - Ensure the subtitle file exists and is not corrupted
+   - Check that the file has the correct extension (.ass)
+
+4. **Translation quality issues**:
+   - Try switching between OpenAI and Gemini APIs
+   - The system preserves original text in curly braces for reference
+
+### Getting Help:
+
+- Check the output window in the GUI for detailed error messages
+- Ensure you have the latest version of the application
+- Verify your API keys have sufficient quota/credits
 
 ## License
 
-This project is provided as-is for educational and personal use.
+This project is open source. Please check the repository for license information.
 
-## Credits
+## Contributing
 
-- Uses OpenAI's GPT API for translation
-- Built with Python and Tkinter
-- Packaged with PyInstaller
+Contributions are welcome! Please feel free to submit pull requests or open issues for:
+- Additional subtitle format support
+- New translation features
+- Bug fixes
+- UI improvements
+
+## API Rate Limits
+
+- **OpenAI**: Varies by plan, check your OpenAI dashboard
+- **Google Gemini**: Check Google AI Studio for your limits
+
+The application includes a 1-second delay between requests to respect rate limits.

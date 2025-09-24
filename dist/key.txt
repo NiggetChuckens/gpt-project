@@ -1,1 +1,2 @@
-HERE_GOES_YOUR_OPENAI_API_KEY
+openai:sk-your-openai-key-here
+gemini:your-gemini-api-key-here

@@ -2,3 +2,4 @@ ass
 pysrt
 openai
 pyinstaller
+google-generativeai
